@@ -1,0 +1,195 @@
+@import "tailwindcss";
+/* Bodoni Moda (display, with optical sizing + italic) and Hanken Grotesk (text). */
+@import "@fontsource-variable/bodoni-moda/opsz.css";
+@import "@fontsource-variable/bodoni-moda/opsz-italic.css";
+@import "@fontsource-variable/hanken-grotesk";
+@import "@fontsource-variable/jetbrains-mono";
+
+/*
+ * Design tokens. Aesthetic: editorial minimal on warm near-black, one gold accent.
+ * Components use semantic utilities only (bg-surface, text-muted, border-line…),
+ * so the whole look lives in this block.
+ */
+:root {
+  --background: #0d0b0a;
+  --surface: #161311;
+  --surface-muted: #1e1a17;
+  --line: #2a2521;
+  --line-strong: #423a33;
+  --ink: #ede7df;
+  --muted: #a89f94;
+  --primary: #d9a43b;
+  --primary-hover: #e6b552;
+  --primary-ink: #1a1306;
+  --accent-soft: #2b2112;
+  --accent-line: #5c4518;
+  --success: #5cc191;
+  --success-soft: #13261c;
+  --danger: #f27a6e;
+  --danger-soft: #2c1513;
+  --warning: #e7b04a;
+  --warning-soft: #2a2010;
+  --info: #7fb4e3;
+  --info-soft: #122030;
+  --ring: #d9a43b;
+  color-scheme: dark;
+
+  /* Hero height: the viewport minus the sticky header, and minus the tab bar on phones. */
+  --hero-h: calc(100svh - 4rem);
+
+  /* DataRain hero background, re-tokened from cyan/violet/pink to the gold palette. */
+  --dr-bg-0: #050403;
+  --dr-bg-1: #0a0806;
+  --dr-bg-2: #15100a;
+  --dr-calm: #b07a26;
+  --dr-mid: #e6b04a;
+  --dr-hot: #ffe3a3;
+  --dr-core: #fff4dc;
+  --dr-vignette: 0.62;
+  --dr-grain: 0.05;
+  --dr-bloom-blur: 10px;
+  --dr-bloom-opacity: 0.7;
+}
+
+@media (max-width: 767px) {
+  :root {
+    --hero-h: calc(100svh - 4rem - 4.5rem - env(safe-area-inset-bottom));
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-ink: var(--primary-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-line: var(--accent-line);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+  --color-ring: var(--ring);
+
+  --font-sans: "Hanken Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Bodoni Moda Variable", ui-serif, Georgia, serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, monospace;
+
+  --ease-out-quart: cubic-bezier(0.165, 0.84, 0.44, 1);
+  --animate-shimmer: shimmer 1.6s linear infinite;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: -200% 0;
+  }
+  to {
+    background-position: 200% 0;
+  }
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    @apply bg-background text-ink font-sans antialiased;
+    min-height: 100svh;
+  }
+  ::selection {
+    background: var(--accent-soft);
+    color: var(--ink);
+  }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  input,
+  select,
+  textarea,
+  button {
+    font: inherit;
+  }
+}
+
+@layer utilities {
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+  .skeleton {
+    background: linear-gradient(90deg, var(--surface-muted) 0%, var(--line) 50%, var(--surface-muted) 100%);
+    background-size: 200% 100%;
+    animation: var(--animate-shimmer);
+  }
+  .safe-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------- DataRain (hero background) ---------- */
+
+@keyframes dr-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.dr-root {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background: radial-gradient(120% 90% at 50% 0%, var(--dr-bg-2) 0%, var(--dr-bg-1) 45%, var(--dr-bg-0) 100%);
+  animation: dr-fade-in 1.2s ease-out both;
+}
+.dr-root--contained {
+  position: absolute;
+}
+.dr-root canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+/* Quarter-resolution copy blurred by CSS = cheap bloom. */
+.dr-bloom {
+  filter: blur(var(--dr-bloom-blur));
+  opacity: var(--dr-bloom-opacity);
+  mix-blend-mode: screen;
+}
+.dr-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 35%, rgb(0 0 0 / var(--dr-vignette)) 100%);
+}
+.dr-grain {
+  position: absolute;
+  inset: 0;
+  opacity: var(--dr-grain);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}

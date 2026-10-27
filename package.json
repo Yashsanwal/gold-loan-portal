@@ -1,0 +1,23 @@
+{
+  "name": "gold-loan-portal",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "packages/shared",
+    "server",
+    "web"
+  ],
+  "engines": {
+    "node": ">=22.12"
+  },
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build": "npm run build -w @goldloan/web",
+    "start": "npm run build && node scripts/start.mjs",
+    "test": "npm run test -w @goldloan/server",
+    "eval": "npm run eval -w @goldloan/server",
+    "typecheck": "npm run typecheck -w @goldloan/server && npm run typecheck -w @goldloan/web",
+    "db:migrate": "npm run db:migrate -w @goldloan/server",
+    "db:seed": "npm run db:seed -w @goldloan/server"
+  }
+}
